@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 use warnings;
 use strict;
+use Cwd;
 
 sub show_tag_list {
     my ($show_dirs, $sorted) = @_;
@@ -35,14 +36,51 @@ sub process_single_arg {
     }
 }
 
+sub add_tag {
+    my ($tag, $dir) = @_;
+    print "add tag $tag $dir\n";
+}
+
+sub remove_tag {
+    my ($tag) = @_;
+    print "remove tag $tag\n";
+}
+
+sub update_previous {
+    my ($new_dir) = @_;
+    print "update to $new_dir\n";
+}
+
 sub process_double_args {
-    my ($arg1, $arg2) = @_;
+    my ($cmd, $tag) = @_;
     
+    if ($cmd !~ /^-a|--add-tag|add|-r|--remove-tag|remove|--update-previous$/) {
+        die "$cmd: command not recognized.";
+    }
+    
+    for ($cmd) {
+        $_ eq "-a"        && add_tag($tag, getcwd());
+        $_ eq "--add-tag" && add_tag($tag, getcwd());
+        $_ eq "add"       && add_tag($tag, getcwd());
+        
+        $_ eq "-r"           && remove_tag($tag);
+        $_ eq "--remove-tag" && remove_tag($tag);
+        $_ eq "remove"       && remove_tag($tag);
+        
+        my $update_dir = $tag;
+        
+        $_ eq "--update-previous" && update_previous($update_dir);
+    }
 }
 
 sub process_triple_args {
-    my ($arg1, $arg2, $arg3) = @_;
+    my ($cmd, $tag, $dir) = @_;
 
+    if ($cmd !~ /^-a|--add-tag|add$/) {
+        die "$cmd: command not recognized.";
+    }
+    
+    add_tag($tag, $dir);
 }
 
 if (scalar @ARGV > 3) {
