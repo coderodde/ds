@@ -1,8 +1,11 @@
 package DirectoryTag;
 use warnings;
 use strict;
-use diagnostics;
-use List::Util;
+
+sub minimum {
+    my @sorted = sort { $a <=> $b } @_;
+    return $sorted[0];
+}
 
 sub edit_distance_impl (\@\@);
 sub edit_distance ($$);
@@ -16,42 +19,49 @@ sub edit_distance ($$) {
 
 sub edit_distance_impl (\@\@) {
     my ($ref_chars1, $ref_chars2) = @_;
-    my $matrix_height = scalar $ref_chars1 + 1;
-    my $matrix_width  = scalar $ref_chars2 + 1;
+    my $matrix_height = scalar @$ref_chars1 + 1;
+    my $matrix_width  = scalar @$ref_chars2 + 1;
     my $matrix = [];
     
     # Initialize the matrix:
-    for my $y ($matrix_height) {
+    for my $y (0 .. $matrix_height - 1) {
         my $row = [];
         # Make $row $matrix_width elements long:
         $row->[$matrix_width - 1] = 0;
         $matrix->[$y] = $row;
+        
+        for my $i (0 .. $matrix_width - 1) {
+            $row->[$i] = 0;
+        }
     }
 
     # Initialize the leftmost column:
-    for my $y (1, $matrix_height - 1) {
+    for my $y (0 .. $matrix_height - 1) {
         $matrix->[$y][0] = $y;
     }
     
     # Initialize the topmost row:
-    for my $x (1, $matrix_width - 1) {
+    for my $x (1 .. $matrix_width - 1) {
         $matrix->[0][$x] = $x;
     }
     
     my $substitution_cost;
     
     # Compute the distance:
-    for my $x (1, $matrix_width - 1) {
-        for my $y (1, $matrix_height - 1) {
-            if ($ref_chars1->[$x] eq $ref_chars2->[$y]) {
+    for my $x (1 .. $matrix_width - 1) {
+        for my $y (1 .. $matrix_height - 1) {
+            
+            if ($$ref_chars1[$y - 1] eq $$ref_chars2[$x - 1]) {
                 $substitution_cost = 0;
             } else {
                 $substitution_cost = 1;
             }
             
-            $matrix->[$y][$x] = min($matrix->[$y - 1][$x] + 1,
-                                    $matrix->[$y][$x - 1] + 1,
-                                    $matrix->[$y - 1][$x - 1] + $substitution_cost);
+            $matrix->[$y][$x] =
+                minimum($matrix->[$y - 1][$x] + 1,
+                        $matrix->[$y][$x - 1] + 1,
+                        $matrix->[$y - 1][$x - 1] +
+                            $substitution_cost);
         }
     }
     
