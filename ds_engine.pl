@@ -13,7 +13,7 @@ sub show_tag_list_sorted_by_dirs {
 }
 
 sub process_jump_to_previous {
-    
+    print "jump to prev!\n";
 }
 
 sub jump_to_tagged_directory {

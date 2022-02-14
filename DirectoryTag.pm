@@ -2,19 +2,22 @@ package DirectoryTag;
 use warnings;
 use strict;
 use diagnostics;
+use List::Util;
 
-sub minimum {
-    sort { $a <=> $b } @_;
-    return @_[1];
+sub edit_distance_impl (\@\@);
+sub edit_distance ($$);
+
+sub edit_distance ($$) {      
+    my ($ref_str1, $ref_str2) = @_;
+    my @chars1 = split "", $ref_str1;
+    my @chars2 = split "", $ref_str2;
+    return edit_distance_impl(@chars1, @chars2);
 }
 
-sub edit_distance_impl {
-    my $chars1 = shift;
-    my $chars2 = shift;
-    
-    my $matrix_height = scalar $chars1 + 1;
-    my $matrix_width  = scalar $chars2 + 1;
-    
+sub edit_distance_impl (\@\@) {
+    my ($ref_chars1, $ref_chars2) = @_;
+    my $matrix_height = scalar $ref_chars1 + 1;
+    my $matrix_width  = scalar $ref_chars2 + 1;
     my $matrix = [];
     
     # Initialize the matrix:
@@ -40,15 +43,15 @@ sub edit_distance_impl {
     # Compute the distance:
     for my $x (1, $matrix_width - 1) {
         for my $y (1, $matrix_height - 1) {
-            if ($chars1->[$x] eq $chars2->[$y]) {
+            if ($ref_chars1->[$x] eq $ref_chars2->[$y]) {
                 $substitution_cost = 0;
             } else {
                 $substitution_cost = 1;
             }
             
-            $matrix->[$y][$x] = minimum($matrix->[$y - 1][$x] + 1,
-                                        $matrix->[$y][$x - 1] + 1,
-                                        $matrix->[$y - 1][$x - 1] + $substitution_cost);
+            $matrix->[$y][$x] = min($matrix->[$y - 1][$x] + 1,
+                                    $matrix->[$y][$x - 1] + 1,
+                                    $matrix->[$y - 1][$x - 1] + $substitution_cost);
         }
     }
     
@@ -65,8 +68,4 @@ sub new {
 sub tag { $_[0]->{tag} = $_[1] if defined $_[1]; $_[0]->{tag}}
 sub dir { $_[0]->{dir} = $_[1] if defined $_[1]; $_[0]->{dir}}
 
-sub edit_distance {      
-    my ($str1, $str2) = @_;
-    my (@chars1, @chars2) = (split("", $str1), split("", $str2));
-    return edit_distance_impl(\@chars1, \@chars2);
-}
+print "edit distance: ", edit_distance("aaa", "aac"), "\n";
