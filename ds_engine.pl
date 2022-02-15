@@ -2,8 +2,8 @@
 use warnings;
 use strict;
 BEGIN { unshift @INC, '.'; }
-use DirectoryTag;
-use DirectoryTagList;
+use DirectoryTagEntry;
+use DirectoryTagEntryList;
 use Cwd;
 
 my $tag_file_name = "tags";

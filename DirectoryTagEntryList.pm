@@ -1,8 +1,8 @@
-package DirectoryTagList;
+package DirectoryTagEntryList;
 use warnings;
 use strict;
 BEGIN { unshift @INC, '.'; }
-use DirectoryTag;
+use DirectoryTagEntry;
 
 sub read_file($);
 
