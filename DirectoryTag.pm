@@ -9,6 +9,7 @@ sub minimum {
 
 sub edit_distance_impl (\@\@);
 sub edit_distance ($$);
+#sub get_edit_distance_to ($);
 
 sub edit_distance ($$) {      
     my ($ref_str1, $ref_str2) = @_;
@@ -70,12 +71,27 @@ sub edit_distance_impl (\@\@) {
 
 sub new {
     my $class = shift;
-    my %self = {@_};
-    bless %self, $class;
-    return ref %self;
+    my $self = {@_};
+    bless ($self, $class);
+    return $self;
 }
 
-sub tag { $_[0]->{tag} = $_[1] if defined $_[1]; $_[0]->{tag}}
-sub dir { $_[0]->{dir} = $_[1] if defined $_[1]; $_[0]->{dir}}
+sub tag {
+    $_[0]->{"tag"} = $_[1] if defined $_[1];
+    return $_[0]->{"tag"}
+}
 
-print "edit distance: ", edit_distance("aaa", "aac"), "\n";
+sub dir {
+    $_[0]->{"dir"} = $_[1] if defined $_[1];
+    return $_[0]->{"dir"}
+}
+
+sub get_edit_distance_to {
+    my $self = shift;
+    my $str = shift;
+    return edit_distance($self->{tag}, $str);
+}
+
+# print "edit distance: ", edit_distance("aaa", "abca"), "\n";
+
+1;
