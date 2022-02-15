@@ -6,6 +6,11 @@ use DirectoryTagEntry;
     
 my $prev_dir_tag_name = "__PREV__";
 
+sub minimum {
+    my @sorted = sort { $a <=> $b } @_;
+    return $sorted[0];
+}
+
 sub maximum {
     my @sorted = sort { $a <=> $b } @_;
     return $sorted[$#sorted];
@@ -146,6 +151,43 @@ sub print_tags_and_dirs {
     for my $tag_entry (@$self) {
         printf("%" . $tag_column_width . "s %s\n", $tag_entry->tag(), $tag_entry->dir()); 
     }
+}
+
+sub print_dirs_tags {
+    my $self = shift;
+    my $max_dir_width = -1;
+    
+    for my $tag_entry (@$self) {
+        $max_dir_width = maximum($max_dir_width,
+                                 Core::length($tag_entry->dir()));
+    }
+    
+    my $dir_column_width = "" . $max_dir_width;
+    
+    for my $tag_entry (@$self) {
+        printf("%" . $dir_column_width . "s %s\n", $tag_entry->dir(), $tag_entry->tag()); 
+    }
+}
+
+sub match {
+    my $self = shift;
+    my $dir = shift;
+    my $current_edit_distance = undef;
+    my $best_match = undef;
+    
+    for my $tag_entry (@$self) {
+        my $tmp_edit_distance = $tag_entry->get_edit_distance_to($dir);
+        
+        if (not defined $current_edit_distance) {
+            $current_edit_distance = $tmp_edit_distance;
+            $best_match = $tag_entry;
+        } elsif ($current_edit_distance > $tmp_edit_distance) {
+            $current_edit_distance = $tmp_edit_distance;
+            $best_match = $tag_entry;
+        }
+    }
+    
+    return $best_match;
 }
 
 1;
