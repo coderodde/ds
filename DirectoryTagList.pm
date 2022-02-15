@@ -15,7 +15,7 @@ sub new {
 
 sub length {
     my $self = shift;
-    return length($self);
+    return scalar(@{$self});
 }
 
 sub read_file($) {
@@ -35,6 +35,19 @@ sub read_file($) {
                                                dir => $dir);
             push @$self, $tag_entry;
         }   
+    }
+}
+
+sub update_previous_directory {
+    my $self = shift;
+    my $prevous_directory_name = shift;    
+    my $previous_directory_entry_name = "__ds_previous";
+
+    for my $tag_entry (@$self) {
+        print $tag_entry->tag(), "\n";
+#        if ($tag_entry->tag() eq "__ds_previous_directory") {
+ #           $tag_entry->dir() = prevous_directory_name;
+  #      }
     }
 }
 

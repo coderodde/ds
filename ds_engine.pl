@@ -96,8 +96,6 @@ if (scalar @ARGV > 3) {
 my $tag = DirectoryTag->new( tag => "home",
                              dir => "/home/rodde" );
 
-#print $tag->tag(), " ", $tag->dir(), " ", $tag->get_edit_distance_to("oe"), "\n";
-
 my $directory_tag_list = DirectoryTagList->new();
 $directory_tag_list->read_file($tag_file_name);
 print "LIST ", $directory_tag_list->length(), "\n";
@@ -108,6 +106,8 @@ for (scalar @ARGV) {
     $_ == 2 && process_double_args @ARGV;
     $_ == 3 && process_triple_args @ARGV;
 }
+
+$directory_tag_list->update_previous_directory("fds");
 
 #my $ss = "  tag    dir  add ";
 #if ($ss =~ /^\s*(\w+)\s+(.*)$/g) {
