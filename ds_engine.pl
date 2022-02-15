@@ -18,7 +18,14 @@ sub show_tag_list_sorted_by_dirs {
 }
 
 sub process_jump_to_previous {
-    print "jump to prev!\n";
+    my $tag_list = shift;
+    my $previous_dir_tag = $tag_list->get_previous_directory();
+    
+    if (defined $previous_dir_tag) {
+        return $previous_dir_tag->dir();
+    }
+    
+    return getcwd;
 }
 
 sub jump_to_tagged_directory {
@@ -93,8 +100,8 @@ if (scalar @ARGV > 3) {
     exit 1;
 }
 
-my $tag = DirectoryTag->new( tag => "home",
-                             dir => "/home/rodde" );
+my $tag = DirectoryTagEntry->new( tag => "home",
+                                  dir => "/home/rodde" );
 
 my $directory_tag_list = DirectoryTagList->new();
 $directory_tag_list->read_file($tag_file_name);

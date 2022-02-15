@@ -3,6 +3,13 @@ use warnings;
 use strict;
 BEGIN { unshift @INC, '.'; }
 use DirectoryTagEntry;
+    
+my $prev_dir_tag_name = "__PREV__";
+
+sub maximum {
+    my @sorted = sort { $a <=> $b } @_;
+    return $sorted[$#sorted];
+}
 
 sub read_file($);
 
@@ -77,7 +84,6 @@ sub remove_tag_entry($) {
 sub update_previous_directory {
     my $self = shift;
     my $prevous_directory_name = shift;
-    my $prev_dir_tag_name = "__PREV__";
     
     for my $tag_entry (@$self) {
         if ($tag_entry->tag() eq $prev_dir_tag_name) {
@@ -90,6 +96,56 @@ sub update_previous_directory {
                                           dir => $prevous_directory_name );
     
     push @$self, $prev_tag;
+}
+
+sub get_previous_directory {
+    my $self = shift;
+    
+    for my $tag_entry (@$self) {
+        if ($tag_entry->tag() eq $prev_dir_tag_name) {
+            return $tag_entry->dir();
+        }
+        
+    }
+    
+    return undef;
+}
+
+sub sort {
+    my $self = shift;
+    my $flag = shift;
+    
+    if ($flag eq "tags") {
+        @$self = sort { $a->tag() cmp $b->tag() } @$self;
+    } elsif ($flag eq "dirs") {
+        @$self = sort { $a->dir() cmp $b->dir() } @$self;
+    } else {
+        die "Unkown sort flag: $flag\n";
+    }
+}
+
+sub print_tags {
+    my $self = shift;
+    
+    for my $tag_entry (@$self) {
+        print $tag_entry->tag(), "\n";
+    }
+}
+
+sub print_tags_and_dirs {
+    my $self = shift;
+    my $max_tag_width = -1;
+    
+    for my $tag_entry (@$self) {
+        $max_tag_width = maximum($max_tag_width,
+                                 Core::length($tag_entry->tag()));
+    }
+    
+    my $tag_column_width = "" . $max_tag_width;
+    
+    for my $tag_entry (@$self) {
+        printf("%" . $tag_column_width . "s %s\n", $tag_entry->tag(), $tag_entry->dir()); 
+    }
 }
 
 1;
