@@ -38,17 +38,58 @@ sub read_file($) {
     }
 }
 
+sub write_file($) {
+    my $self = shift;
+    my $file_name = shift;
+    open(TAG_FILE, ">", $file_name) or die "Cannot open $file_name: $!\n";
+    
+    for my $tag_entry ($self) {
+        print TAG_FILE $tag_entry->tag() . " " . $tag_entry->dir() . "\n";
+    }
+}
+
+sub add_tag_entry($$) {
+    my $self = shift;
+    my $tag = shift;
+    my $dir = shift;
+    my $tag_entry = DirectoryTagEntry->new(tag => $tag,
+                                           dir => $dir);
+    push @$self, $tag_entry;
+}
+
+sub remove_tag_entry($) {
+    my $self = shift;
+    my $tag = shift;
+    my $i = 0;
+    
+    for my $tag_entry (@$self) {
+        if ($tag_entry->tag() eq $tag) {
+            splice @$self, $i, 1;    
+            return 1;
+        }
+        
+        $i++;    
+    }
+    
+    return 0;
+}
+
 sub update_previous_directory {
     my $self = shift;
-    my $prevous_directory_name = shift;    
-    my $previous_directory_entry_name = "__ds_previous";
-
+    my $prevous_directory_name = shift;
+    my $prev_dir_tag_name = "__PREV__";
+    
     for my $tag_entry (@$self) {
-        print $tag_entry->tag(), "\n";
-#        if ($tag_entry->tag() eq "__ds_previous_directory") {
- #           $tag_entry->dir() = prevous_directory_name;
-  #      }
+        if ($tag_entry->tag() eq $prev_dir_tag_name) {
+            $tag_entry->dir($prevous_directory_name);
+            return;
+        }
     }
+    
+    my $prev_tag = DirectoryTagEntry->new(tag => $prev_dir_tag_name,
+                                          dir => $prevous_directory_name );
+    
+    push @$self, $prev_tag;
 }
 
 1;
