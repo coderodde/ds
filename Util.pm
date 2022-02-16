@@ -4,6 +4,7 @@ use constant {
     SORT_BY_TAGS           => "tags",
     SORT_BY_DIRS           => "dirs",
     TAG_FILE_NAME          => "tags",
+    TMP_TAG_FILE_NAME_FMT  => "tags.XXXXX",
     
     OPERATION_SWITCH       => "switch_directory",
     OPERATION_NOP          => "nop",
@@ -19,6 +20,9 @@ use constant {
     COMMAND_REMOVE_SHORT   => "-r",
     COMMAND_REMOVE_LONG    => "--remove-tag",
     COMMAND_REMOVE_WORD    => "remove",
+    
+    EXIT_STATUS_TOO_MANY_ARGS => 1
+    
 };
 
 1;  

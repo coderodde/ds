@@ -49,6 +49,8 @@ sub read_file($) {
             push @$self, $tag_entry;
         }   
     }
+    
+    close TAG_FILE;
 }
 
 sub write_file($) {
@@ -59,6 +61,8 @@ sub write_file($) {
     for my $tag_entry ($self) {
         print TAG_FILE $tag_entry->tag() . " " . $tag_entry->dir() . "\n";
     }
+    
+    close TAG_FILE;
 }
 
 sub add_tag_entry($$) {

@@ -44,14 +44,14 @@ sub process_jump_to_previous {
 sub jump_to_tagged_directory {
     my $list = shift;
     my $tag = shift;
-    my $dir = $list->match($tag);
+    my $best_tag_entry = $list->match($tag);
 
     print Util::OPERATION_SWITCH, "\n";    
     
-    if (not defined $dir) {
+    if (not defined $best_tag_entry) {
         print getcwd, "\n";
     } else {
-        print $dir, "\n";     
+        print "cd ", $best_tag_entry->dir(), "\n";     
     }
 }
 
@@ -75,6 +75,8 @@ sub process_single_arg {
 sub add_tag {
     my ($list, $tag, $dir) = @_;
     $list->add_tag_entry($tag, $dir);
+    save_list($list);
+    
     print Util::OPERATION_MSG, "\n";
     print "Added tag \"$tag\" pointing to <$dir>";
 }
@@ -82,6 +84,7 @@ sub add_tag {
 sub remove_tag {
     my ($list,, $tag) = @_;
     my $remove_tag_entry = $list->remove_tag_entry($tag);
+    save_list($list);
     
     print Util::OPERATION_MSG, "\n";
         
@@ -130,19 +133,27 @@ sub process_triple_args {
     add_tag($tag, $dir);
 }
 
-if (scalar @ARGV > 3) {
-    print STDERR "Too many arguments!";
-    exit 1;
+sub too_many_args {
+    my $count = shift;
+    print Util::OPERATION_MSG, "Too many arguments: $count.\n";
+    exit Util::EXIT_STATUS_TOO_MANY_ARGS;
+}
+
+sub get_temp_tag_file_name {
+    my $file_name;
+    chomp($file_name = `mktemp ${Util::TMP_TAG_FILE_NAME_FMT}`);
+}
+
+sub save_list {
+    my $list = shift;
+    my $temp_tag_file_name = get_temp_tag_file_name();
+    $list->write_file($temp_tag_file_name);
+    unlink(Util::TAG_FILE_NAME);
+    rename $temp_tag_file_name, Util::TAG_FILE_NAME;
 }
 
 my $directory_tag_list = DirectoryTagEntryList->new();
 $directory_tag_list->read_file(Util::TAG_FILE_NAME);
-
-sub too_many_args {
-    my $count = shift;
-    print Util::OPERATION_NOP, "\n";
-    die "Too many arguments: $count.\n"; 
-}
 
 for (scalar @ARGV) {
     $_ == 0 && process_jump_to_previous($directory_tag_list);
