@@ -13,18 +13,19 @@ sub show_tag_list {
     
     if ($sorted) {
         $list->sort(Util::SORT_BY_TAGS);
-        
-        if ($show_dirs) {
-             $list->print_tags_and_dirs();
-        } else {
-             $list->print_tags();
-        }                                            
     }
+    
+    if ($show_dirs) {
+         $list->print_tags_and_dirs();
+    } else {
+         $list->print_tags();
+    }                               
 }
 
 sub show_tag_list_sorted_by_dirs {
     my $list = shift;
-    $list->print_dirs_tags();
+    $list->sort(Util::SORT_BY_DIRS);
+    $list->print_dirs_and_tags();
 }
 
 sub process_jump_to_previous {
@@ -55,8 +56,8 @@ sub jump_to_tagged_directory {
 }
 
 sub process_single_arg {
-    my $flag = $_[0];
-    my $list = $_[1];
+    my $list = $_[0];
+    my $flag = $_[1];
     
     if ($flag =~ /^-[lLsSd]$/) {
         for ($flag) {
@@ -64,7 +65,7 @@ sub process_single_arg {
             $_ eq "-L" && show_tag_list($list, 1, 0);
             $_ eq "-s" && show_tag_list($list, 0, 1);
             $_ eq "-S" && show_tag_list($list, 1, 1);
-            $_ eq "-d" && show_tag_list_sorted_by_dirs($list);
+            $_ eq "-d" && show_tag_list_sorted_by_dirs($list);  
         }
     } else {
         jump_to_tagged_directory($list, $flag);   
@@ -126,9 +127,16 @@ if (scalar @ARGV > 3) {
 my $directory_tag_list = DirectoryTagEntryList->new();
 $directory_tag_list->read_file(Util::TAG_FILE_NAME);
 
+sub too_many_args {
+    my $count = shift;
+    print Util::OPERATION_NOP, "\n";
+    die "Too many arguments: $count.\n"; 
+}
+
 for (scalar @ARGV) {
     $_ == 0 && process_jump_to_previous($directory_tag_list);
-    $_ == 1 && process_single_arg  ($directory_tag_list, @ARGV);
-    $_ == 2 && process_double_args ($directory_tag_list, @ARGV);
-    $_ == 3 && process_triple_args ($directory_tag_list, @ARGV);
+    $_ == 1 && process_single_arg      ($directory_tag_list, @ARGV);
+    $_ == 2 && process_double_args     ($directory_tag_list, @ARGV);
+    $_ == 3 && process_triple_args     ($directory_tag_list, @ARGV);
+    $_  > 3 && too_many_args           (scalar @ARGV);
 }

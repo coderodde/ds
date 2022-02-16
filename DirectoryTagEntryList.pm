@@ -26,7 +26,7 @@ sub new {
     return $self;
 }
 
-sub length {
+sub get_size {
     my $self = shift;
     return scalar(@{$self});
 }
@@ -120,17 +120,18 @@ sub sort {
     my $self = shift;
     my $flag = shift;
     
-    if ($flag eq "tags") {
+    if ($flag eq Util::SORT_BY_TAGS) {
         @$self = sort { $a->tag() cmp $b->tag() } @$self;
-    } elsif ($flag eq "dirs") {
+    } elsif ($flag eq Util::SORT_BY_DIRS) {
         @$self = sort { $a->dir() cmp $b->dir() } @$self;
     } else {
-        die "Unkown sort flag: $flag\n";
+        die "Unknown sort flag: $flag\n";
     }
 }
 
 sub print_tags {
     my $self = shift;
+    print Util::OPERATION_NOP, "\n";
     
     for my $tag_entry (@$self) {
         print $tag_entry->tag(), "\n";
@@ -143,29 +144,35 @@ sub print_tags_and_dirs {
     
     for my $tag_entry (@$self) {
         $max_tag_width = maximum($max_tag_width,
-                                 Core::length($tag_entry->tag()));
+                                 length($tag_entry->tag()));
     }
     
     my $tag_column_width = "" . $max_tag_width;
+    print Util::OPERATION_NOP, "\n";
     
     for my $tag_entry (@$self) {
-        printf("%" . $tag_column_width . "s %s\n", $tag_entry->tag(), $tag_entry->dir()); 
+        printf("%" . $tag_column_width . "s %s\n",
+               $tag_entry->tag(),
+               $tag_entry->dir()); 
     }
 }
 
-sub print_dirs_tags {
+sub print_dirs_args_tags {
     my $self = shift;
     my $max_dir_width = -1;
     
     for my $tag_entry (@$self) {
         $max_dir_width = maximum($max_dir_width,
-                                 Core::length($tag_entry->dir()));
+                                 length($tag_entry->dir()));
     }
     
     my $dir_column_width = "" . $max_dir_width;
+    print Util::OPERATION_NOP, "\n";
     
     for my $tag_entry (@$self) {
-        printf("%" . $dir_column_width . "s %s\n", $tag_entry->dir(), $tag_entry->tag()); 
+        printf("%" . $dir_column_width . "s %s\n",
+               $tag_entry->dir(),
+               $tag_entry->tag()); 
     }
 }
 
@@ -177,6 +184,10 @@ sub match {
     
     for my $tag_entry (@$self) {
         my $tmp_edit_distance = $tag_entry->get_edit_distance_to($dir);
+        
+        if ($tmp_edit_distance == 0) {
+            return $tag_entry->dir();
+        }
         
         if (not defined $current_edit_distance) {
             $current_edit_distance = $tmp_edit_distance;
