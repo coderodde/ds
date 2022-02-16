@@ -53,13 +53,16 @@ sub jump_to_tagged_directory {
     my $tag = shift;
     my $best_tag_entry = $list->match($tag);
 
-    print DSConstants::OPERATION_SWITCH, "\n";    
+    print DSConstants::OPERATION_SWITCH, "\n";
+    print "cd ";
     
     if (not defined $best_tag_entry) {
-        print getcwd, "\n";
+        print getcwd();
     } else {
-        print "cd ", $best_tag_entry->dir(), "\n";     
+        print $best_tag_entry->dir();     
     }
+    
+    print "\n";
 }
 
 sub process_single_arg {
@@ -117,8 +120,12 @@ sub remove_tag {
 }
 
 sub update_previous {
-    my ($new_dir) = @_;
-    print "update to $new_dir\n";
+    my $list = shift;
+    my $new_dir = shift;
+    
+    $list->update_previous_directory($new_dir);
+    save_list($list);
+    print DSConstants::OPERATION_NOP;
 }
 
 sub process_double_args {
@@ -139,7 +146,7 @@ sub process_double_args {
         
         my $update_dir = $tag;
         
-        $_ eq "--update-previous" && update_previous($update_dir);
+        $_ eq "--update-previous" && update_previous($list, $update_dir);
     }
 }
 
