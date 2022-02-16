@@ -3,7 +3,7 @@ use warnings;
 use strict;
 BEGIN { unshift @INC, '.'; }
 use DirectoryTagEntry;
-use Util;
+use DSConstants;
 
 sub get_previous_directory;
 
@@ -106,14 +106,15 @@ sub update_previous_directory {
     my $prevous_directory_name = shift;
     
     for my $tag_entry (@$self) {
-        if ($tag_entry->tag() eq Util::PREVIOUS_DIRECTORY_TAG) {
+        if ($tag_entry->tag() eq DSConstants::PREVIOUS_DIRECTORY_TAG) {
             $tag_entry->dir($prevous_directory_name);
             return;
         }
     }
     
-    my $prev_tag = DirectoryTagEntry->new(tag => Util::PREVIOUS_DIRECTORY_TAG,
-                                          dir => $prevous_directory_name );
+    my $prev_tag = DirectoryTagEntry->new(
+                    tag => DSConstants::PREVIOUS_DIRECTORY_TAG,
+                    dir => $prevous_directory_name );
     
     push @$self, $prev_tag;
 }
@@ -122,7 +123,7 @@ sub get_previous_directory {
     my $self = shift;
     
     for my $tag_entry (@$self) {
-        if ($tag_entry->tag() eq Util::PREVIOUS_DIRECTORY_TAG) {
+        if ($tag_entry->tag() eq DSConstants::PREVIOUS_DIRECTORY_TAG) {
             return $tag_entry->dir();
         }
     }
@@ -134,9 +135,9 @@ sub sort {
     my $self = shift;
     my $flag = shift;
     
-    if ($flag eq Util::SORT_BY_TAGS) {
+    if ($flag eq DSConstants::SORT_BY_TAGS) {
         @$self = sort { $a->tag() cmp $b->tag() } @$self;
-    } elsif ($flag eq Util::SORT_BY_DIRS) {
+    } elsif ($flag eq DSConstants::SORT_BY_DIRS) {
         @$self = sort { $a->dir() cmp $b->dir() } @$self;
     } else {
         die "Unknown sort flag: $flag\n";
@@ -145,7 +146,7 @@ sub sort {
 
 sub print_tags {
     my $self = shift;
-    print Util::OPERATION_LIST, "\n";
+    print DSConstants::OPERATION_LIST, "\n";
     
     for my $tag_entry (@$self) {
         print $tag_entry->tag(), "\n";
@@ -162,7 +163,7 @@ sub print_tags_and_dirs {
     }
     
     my $tag_column_width = "" . $max_tag_width;
-    print Util::OPERATION_LIST, "\n";
+    print DSConstants::OPERATION_LIST, "\n";
     
     for my $tag_entry (@$self) {
         printf("%-" . $tag_column_width . "s  %s\n",
@@ -181,7 +182,7 @@ sub print_dirs_and_tags {
     }
     
     my $dir_column_width = "" . $max_dir_width;
-    print Util::OPERATION_LIST, "\n";
+    print DSConstants::OPERATION_LIST, "\n";
     
     for my $tag_entry (@$self) {
         printf("%-" . $dir_column_width . "s  %s\n",

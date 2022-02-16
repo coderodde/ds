@@ -1,19 +1,23 @@
 #!/usr/bin/perl
 use warnings;
-use strict;     
+use strict;
+
+require File::Temp;
+
 BEGIN { unshift @INC, '.'; }
+
+use Cwd;
+use DSConstants;
 use DirectoryTagEntry;
 use DirectoryTagEntryList;
-use Cwd;
-use File::Temp qw/ tempfile /;
-use Util;
+use File::Temp ();
 
 sub show_tag_list {
     my $list = shift;
     my ($show_dirs, $sorted) = @_;
     
     if ($sorted) {
-        $list->sort(Util::SORT_BY_TAGS);
+        $list->sort(DSConstants::SORT_BY_TAGS);
     }
     
     if ($show_dirs) {
@@ -25,7 +29,7 @@ sub show_tag_list {
 
 sub show_tag_list_sorted_by_dirs {
     my $list = shift;
-    $list->sort(Util::SORT_BY_DIRS);
+    $list->sort(DSConstants::SORT_BY_DIRS);
     $list->print_dirs_and_tags();
 }
 
@@ -33,7 +37,9 @@ sub process_jump_to_previous {
     my $list = shift;
     my $previous_dir_tag = $list->get_previous_directory();
     
-    print Util::OPERATION_SWITCH, "\n";
+    print DSConstants::OPERATION_SWITCH, "\n";
+    
+    print "cd ";
     
     if (defined $previous_dir_tag) {
         print $previous_dir_tag->dir();
@@ -47,7 +53,7 @@ sub jump_to_tagged_directory {
     my $tag = shift;
     my $best_tag_entry = $list->match($tag);
 
-    print Util::OPERATION_SWITCH, "\n";    
+    print DSConstants::OPERATION_SWITCH, "\n";    
     
     if (not defined $best_tag_entry) {
         print getcwd, "\n";
@@ -77,7 +83,7 @@ sub add_tag {
     my ($list, $tag, $dir) = @_;
     my $dup_tag_entry = $list->get_tag_entry($tag);
     
-    print Util::OPERATION_MSG, "\n";
+    print DSConstants::OPERATION_MSG, "\n";
     
     if ($dup_tag_entry) {
         print "Updating the tag \"$tag\" to point from\n<",
@@ -100,7 +106,7 @@ sub remove_tag {
     my $remove_tag_entry = $list->remove_tag_entry($tag);
     save_list($list);
     
-    print Util::OPERATION_MSG, "\n";
+    print DSConstants::OPERATION_MSG, "\n";
         
     if (defined $remove_tag_entry) {
         print "Removed tag \"" . $remove_tag_entry->tag() . "\"" .
@@ -141,12 +147,12 @@ sub process_triple_args {
     my ($list, $cmd, $tag, $dir) = @_;
 
     if ($cmd !~ /^-a|--add-tag|add$/) {
-        print Util::OPERATION_MSG . "\n";
+        print DSConstants::OPERATION_MSG . "\n";
         print "$cmd: command not recognized. ";
-        print Util::COMMAND_ADD_SHORT, ", ";
-        print Util::COMMAND_ADD_LONG, " or ";
-        print Util::COMMAND_ADD_WORD, " expected.";
-        exit Util::EXIT_STATUS_BAD_COMMAND;
+        print DSConstants::COMMAND_ADD_SHORT, ", ";
+        print DSConstants::COMMAND_ADD_LONG, " or ";
+        print DSConstants::COMMAND_ADD_WORD, " expected.";
+        exit DSConstants::EXIT_STATUS_BAD_COMMAND;
     }
     
     $list->add_tag_entry($tag, $dir);
@@ -154,24 +160,24 @@ sub process_triple_args {
 
 sub too_many_args {
     my $count = shift;
-    print Util::OPERATION_MSG, "Too many arguments: $count.\n";
-    exit Util::EXIT_STATUS_TOO_MANY_ARGS;
+    print DSConstants::OPERATION_MSG, "Too many arguments: $count.\n";
+    exit DSConstants::EXIT_STATUS_TOO_MANY_ARGS;
 }
 
 sub get_temp_tag_file_name {
-    return tempfile();
+    return File::Temp::tempfile(DSConstants::TMP_TAG_FILE_NAME_TEMPLATE);
 }
 
 sub save_list {
     my $list = shift;
     my $temp_tag_file_name = get_temp_tag_file_name();
     $list->write_file($temp_tag_file_name);
-    unlink(Util::TAG_FILE_NAME);
-    rename $temp_tag_file_name, Util::TAG_FILE_NAME;
+    unlink(DSConstants::TAG_FILE_NAME);
+    rename $temp_tag_file_name, DSConstants::TAG_FILE_NAME;
 }
 
 my $directory_tag_list = DirectoryTagEntryList->new();
-$directory_tag_list->read_file(Util::TAG_FILE_NAME);
+$directory_tag_list->read_file(DSConstants::TAG_FILE_NAME);
 
 for (scalar @ARGV) {
     $_ == 0 && process_jump_to_previous($directory_tag_list);
