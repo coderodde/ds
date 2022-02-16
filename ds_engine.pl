@@ -5,6 +5,7 @@ BEGIN { unshift @INC, '.'; }
 use DirectoryTagEntry;
 use DirectoryTagEntryList;
 use Cwd;
+use File::Temp qw/ tempfile /;
 use Util;
 
 sub show_tag_list {
@@ -74,11 +75,24 @@ sub process_single_arg {
 
 sub add_tag {
     my ($list, $tag, $dir) = @_;
-    $list->add_tag_entry($tag, $dir);
-    save_list($list);
+    my $dup_tag_entry = $list->get_tag_entry($tag);
     
     print Util::OPERATION_MSG, "\n";
-    print "Added tag \"$tag\" pointing to <$dir>";
+    
+    if ($dup_tag_entry) {
+        print "Updating the tag \"$tag\" to point from\n<",
+              $dup_tag_entry->dir(),
+              ">to\n<$dir>\n";
+              
+        $dup_tag_entry->dir($dir);
+    } else {
+        print "Added the tag \"$tag\" to point to \n",
+              "<$dir>.\n";
+              
+        $list->add_tag_entry($tag, $dir);
+    }
+    
+    save_list($list);
 }
 
 sub remove_tag {
@@ -89,8 +103,8 @@ sub remove_tag {
     print Util::OPERATION_MSG, "\n";
         
     if (defined $remove_tag_entry) {
-        print "Removed tag \"$remove_tag_entry->tag()\"" .
-              " pointing to <$remove_tag_entry->dir()>";          
+        print "Removed tag \"" . $remove_tag_entry->tag() . "\"" .
+              " pointing to <" . $remove_tag_entry->dir() . ">";          
     } else {
         print "$tag: no such tag.\n";
     }
@@ -124,13 +138,18 @@ sub process_double_args {
 }
 
 sub process_triple_args {
-    my ($cmd, $tag, $dir) = @_;
+    my ($list, $cmd, $tag, $dir) = @_;
 
     if ($cmd !~ /^-a|--add-tag|add$/) {
-        die "$cmd: command not recognized.";
+        print Util::OPERATION_MSG . "\n";
+        print "$cmd: command not recognized. ";
+        print Util::COMMAND_ADD_SHORT, ", ";
+        print Util::COMMAND_ADD_LONG, " or ";
+        print Util::COMMAND_ADD_WORD, " expected.";
+        exit Util::EXIT_STATUS_BAD_COMMAND;
     }
     
-    add_tag($tag, $dir);
+    $list->add_tag_entry($tag, $dir);
 }
 
 sub too_many_args {
@@ -140,8 +159,7 @@ sub too_many_args {
 }
 
 sub get_temp_tag_file_name {
-    my $file_name;
-    chomp($file_name = `mktemp ${Util::TMP_TAG_FILE_NAME_FMT}`);
+    return tempfile();
 }
 
 sub save_list {

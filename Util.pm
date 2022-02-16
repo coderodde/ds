@@ -21,7 +21,8 @@ use constant {
     COMMAND_REMOVE_LONG    => "--remove-tag",
     COMMAND_REMOVE_WORD    => "remove",
     
-    EXIT_STATUS_TOO_MANY_ARGS => 1
+    EXIT_STATUS_TOO_MANY_ARGS => 1,
+    EXIT_STATUS_BAD_COMMAND   => 2
     
 };
 

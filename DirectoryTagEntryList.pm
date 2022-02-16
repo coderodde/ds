@@ -58,20 +58,30 @@ sub write_file($) {
     my $file_name = shift;
     open(TAG_FILE, ">", $file_name) or die "Cannot open $file_name: $!\n";
     
-    for my $tag_entry ($self) {
+    for my $tag_entry (@$self) {
         print TAG_FILE $tag_entry->tag() . " " . $tag_entry->dir() . "\n";
     }
     
     close TAG_FILE;
 }
 
-sub add_tag_entry($$) {
+sub add_tag_entry {
     my $self = shift;
     my $tag = shift;
     my $dir = shift;
+    
+    for my $tag_entry (@$self) {
+        if ($tag_entry->tag() eq $tag) {
+            # Tag already present. Update:
+            $tag_entry->dir($dir);     
+            return $tag_entry;
+        }
+    }
+    
     my $tag_entry = DirectoryTagEntry->new(tag => $tag,
                                            dir => $dir);
     push @$self, $tag_entry;
+    return $tag_entry;
 }
 
 sub remove_tag_entry($) {
@@ -203,6 +213,19 @@ sub match {
     }
     
     return $best_match;
+}
+
+sub get_tag_entry {
+    my $self = shift;
+    my $tag = shift;
+    
+    for my $tag_entry (@$self) {
+        if ($tag eq $tag_entry->tag()) {
+            return $tag_entry;
+        }
+    }
+    
+    return undef;
 }
 
 1;
