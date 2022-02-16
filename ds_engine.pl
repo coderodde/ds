@@ -1,30 +1,37 @@
 #!/usr/bin/perl
 use warnings;
-use strict;
+use strict;     
 BEGIN { unshift @INC, '.'; }
 use DirectoryTagEntry;
 use DirectoryTagEntryList;
 use Cwd;
-
-my $tag_file_name = "tags";
-my $operation_switch_dir = "switch_directory";
+use Util;
 
 sub show_tag_list {
     my $list = shift;
     my ($show_dirs, $sorted) = @_;
-    print "dirs: $show_dirs, sorted: $sorted\n";
+    
+    if ($sorted) {
+        $list->sort(Util::SORT_BY_TAGS);
+        
+        if ($show_dirs) {
+             $list->print_tags_and_dirs();
+        } else {
+             $list->print_tags();
+        }                                            
+    }
 }
 
 sub show_tag_list_sorted_by_dirs {
-    
-    print "by dirs\n";
+    my $list = shift;
+    $list->print_dirs_tags();
 }
 
 sub process_jump_to_previous {
-    my $tag_list = shift;
-    my $previous_dir_tag = $tag_list->get_previous_directory();
+    my $list = shift;
+    my $previous_dir_tag = $list->get_previous_directory();
     
-    print "$operation_switch_dir\n";
+    print Util::OPERATION_SWITCH, "\n";
     
     if (defined $previous_dir_tag) {
         print $previous_dir_tag->dir();
@@ -38,12 +45,12 @@ sub jump_to_tagged_directory {
     my $tag = shift;
     my $dir = $list->match($tag);
 
-    print "$operation_switch_dir\n";    
+    print Util::OPERATION_SWITCH, "\n";    
     
     if (not defined $dir) {
         print getcwd, "\n";
     } else {
-        print $dir, "\n";  
+        print $dir, "\n";     
     }
 }
 
@@ -116,16 +123,12 @@ if (scalar @ARGV > 3) {
     exit 1;
 }
 
-#my $tag = DirectoryTagEntry->new( tag => "home",
-#                                  dir => "/home/rodde" );
-
-my $directory_tag_list = DirectoryTagList->new();
-$directory_tag_list->read_file($tag_file_name);
-print "LIST ", $directory_tag_list->length(), "\n";
+my $directory_tag_list = DirectoryTagEntryList->new();
+$directory_tag_list->read_file(Util::TAG_FILE_NAME);
 
 for (scalar @ARGV) {
-    $_ == 0 && process_jump_to_previous;
-    $_ == 1 && process_single_arg  @ARGV;
-    $_ == 2 && process_double_args @ARGV;
-    $_ == 3 && process_triple_args @ARGV;
+    $_ == 0 && process_jump_to_previous($directory_tag_list);
+    $_ == 1 && process_single_arg  ($directory_tag_list, @ARGV);
+    $_ == 2 && process_double_args ($directory_tag_list, @ARGV);
+    $_ == 3 && process_triple_args ($directory_tag_list, @ARGV);
 }

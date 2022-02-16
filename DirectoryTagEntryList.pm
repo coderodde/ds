@@ -3,8 +3,9 @@ use warnings;
 use strict;
 BEGIN { unshift @INC, '.'; }
 use DirectoryTagEntry;
-    
-my $prev_dir_tag_name = "__PREV__";
+use Util;
+
+sub get_previous_directory;
 
 sub minimum {
     my @sorted = sort { $a <=> $b } @_;
@@ -43,8 +44,8 @@ sub read_file($) {
             my $tag = $1;
             my $dir = $2;
             $dir =~ s/^\s+|\s+$//g;
-            my $tag_entry = DirectoryTag->new( tag => $tag,
-                                               dir => $dir);
+            my $tag_entry = DirectoryTagEntry->new( tag => $tag,
+                                                    dir => $dir );
             push @$self, $tag_entry;
         }   
     }
@@ -91,13 +92,13 @@ sub update_previous_directory {
     my $prevous_directory_name = shift;
     
     for my $tag_entry (@$self) {
-        if ($tag_entry->tag() eq $prev_dir_tag_name) {
+        if ($tag_entry->tag() eq Util::PREVIOUS_DIRECTORY_TAG) {
             $tag_entry->dir($prevous_directory_name);
             return;
         }
     }
     
-    my $prev_tag = DirectoryTagEntry->new(tag => $prev_dir_tag_name,
+    my $prev_tag = DirectoryTagEntry->new(tag => Util::PREVIOUS_DIRECTORY_TAG,
                                           dir => $prevous_directory_name );
     
     push @$self, $prev_tag;
@@ -107,10 +108,9 @@ sub get_previous_directory {
     my $self = shift;
     
     for my $tag_entry (@$self) {
-        if ($tag_entry->tag() eq $prev_dir_tag_name) {
+        if ($tag_entry->tag() eq Util::PREVIOUS_DIRECTORY_TAG) {
             return $tag_entry->dir();
         }
-        
     }
     
     return undef;
