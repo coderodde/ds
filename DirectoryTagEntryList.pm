@@ -78,13 +78,13 @@ sub remove_tag_entry($) {
     for my $tag_entry (@$self) {
         if ($tag_entry->tag() eq $tag) {
             splice @$self, $i, 1;    
-            return 1;
+            return $tag_entry;
         }
         
         $i++;    
     }
     
-    return 0;
+    return undef;
 }
 
 sub update_previous_directory {
@@ -131,7 +131,7 @@ sub sort {
 
 sub print_tags {
     my $self = shift;
-    print Util::OPERATION_NOP, "\n";
+    print Util::OPERATION_LIST, "\n";
     
     for my $tag_entry (@$self) {
         print $tag_entry->tag(), "\n";
@@ -148,16 +148,16 @@ sub print_tags_and_dirs {
     }
     
     my $tag_column_width = "" . $max_tag_width;
-    print Util::OPERATION_NOP, "\n";
+    print Util::OPERATION_LIST, "\n";
     
     for my $tag_entry (@$self) {
-        printf("%" . $tag_column_width . "s %s\n",
+        printf("%-" . $tag_column_width . "s  %s\n",
                $tag_entry->tag(),
                $tag_entry->dir()); 
     }
 }
 
-sub print_dirs_args_tags {
+sub print_dirs_and_tags {
     my $self = shift;
     my $max_dir_width = -1;
     
@@ -167,10 +167,10 @@ sub print_dirs_args_tags {
     }
     
     my $dir_column_width = "" . $max_dir_width;
-    print Util::OPERATION_NOP, "\n";
+    print Util::OPERATION_LIST, "\n";
     
     for my $tag_entry (@$self) {
-        printf("%" . $dir_column_width . "s %s\n",
+        printf("%-" . $dir_column_width . "s  %s\n",
                $tag_entry->dir(),
                $tag_entry->tag()); 
     }

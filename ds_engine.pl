@@ -73,13 +73,24 @@ sub process_single_arg {
 }
 
 sub add_tag {
-    my ($tag, $dir) = @_;
-    print "add tag $tag $dir\n";
+    my ($list, $tag, $dir) = @_;
+    $list->add_tag_entry($tag, $dir);
+    print Util::OPERATION_MSG, "\n";
+    print "Added tag \"$tag\" pointing to <$dir>";
 }
 
 sub remove_tag {
-    my ($tag) = @_;
-    print "remove tag $tag\n";
+    my ($list,, $tag) = @_;
+    my $remove_tag_entry = $list->remove_tag_entry($tag);
+    
+    print Util::OPERATION_MSG, "\n";
+        
+    if (defined $remove_tag_entry) {
+        print "Removed tag \"$remove_tag_entry->tag()\"" .
+              " pointing to <$remove_tag_entry->dir()>";          
+    } else {
+        print "$tag: no such tag.\n";
+    }
 }
 
 sub update_previous {
@@ -88,20 +99,20 @@ sub update_previous {
 }
 
 sub process_double_args {
-    my ($cmd, $tag) = @_;
+    my ($list, $cmd, $tag) = @_;
     
     if ($cmd !~ /^-a|--add-tag|add|-r|--remove-tag|remove|--update-previous$/) {
         die "$cmd: command not recognized.";
     }
     
     for ($cmd) {
-        $_ eq "-a"        && add_tag($tag, getcwd());
-        $_ eq "--add-tag" && add_tag($tag, getcwd());
-        $_ eq "add"       && add_tag($tag, getcwd());
+        $_ eq "-a"        && add_tag($list, $tag, getcwd());
+        $_ eq "--add-tag" && add_tag($list, $tag, getcwd());
+        $_ eq "add"       && add_tag($list, $tag, getcwd());
         
-        $_ eq "-r"           && remove_tag($tag);
-        $_ eq "--remove-tag" && remove_tag($tag);
-        $_ eq "remove"       && remove_tag($tag);
+        $_ eq "-r"           && remove_tag($list, $tag);
+        $_ eq "--remove-tag" && remove_tag($list, $tag);
+        $_ eq "remove"       && remove_tag($list, $tag);
         
         my $update_dir = $tag;
         
