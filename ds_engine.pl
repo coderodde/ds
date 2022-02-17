@@ -71,11 +71,11 @@ sub process_single_arg {
     
     if ($flag =~ /^-[lLsSd]$/) {
         for ($flag) {
-            $_ eq "-l" && show_tag_list($list, 0, 0);
-            $_ eq "-L" && show_tag_list($list, 1, 0);
-            $_ eq "-s" && show_tag_list($list, 0, 1);
-            $_ eq "-S" && show_tag_list($list, 1, 1);
-            $_ eq "-d" && show_tag_list_sorted_by_dirs($list);  
+            $_ eq DSConstants::COMMAND_LIST_TAGS             && show_tag_list($list, 0, 0);
+            $_ eq DSConstants::COMMAND_LIST_TAGS_DIRS        && show_tag_list($list, 1, 0);
+            $_ eq DSConstants::COMMAND_LIST_SORTED_TAGS      && show_tag_list($list, 0, 1);
+            $_ eq DSConstants::COMMAND_LIST_SORTED_TAGS_DIRS && show_tag_list($list, 1, 1);
+            $_ eq DSConstants::COMMAND_LIST_SORTED_DIRS      && show_tag_list_sorted_by_dirs($list);  
         }
     } else {
         jump_to_tagged_directory($list, $flag);   
