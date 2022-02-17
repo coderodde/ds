@@ -130,30 +130,44 @@ sub update_previous {
 
 sub process_double_args {
     my ($list, $cmd, $tag) = @_;
+
+    my $cmd_regex = "^" .
+                    DSConstants::COMMAND_ADD_SHORT       . "|" .
+                    DSConstants::COMMAND_ADD_LONG        . "|" .
+                    DSConstants::COMMAND_ADD_WORD        . "|" .
+                    DSConstants::COMMAND_REMOVE_SHORT    . "|" .
+                    DSConstants::COMMAND_REMOVE_LONG     . "|" .
+                    DSConstants::COMMAND_REMOVE_WORD     . "|" .
+                    DSConstants::COMMAND_UPDATE_PREVIOUS . "\$";
     
-    if ($cmd !~ /^-a|--add-tag|add|-r|--remove-tag|remove|--update-previous$/) {
+    if ($cmd !~ /$cmd_regex/) {
         die "$cmd: command not recognized.";
     }
     
     for ($cmd) {
-        $_ eq "-a"        && add_tag($list, $tag, getcwd());
-        $_ eq "--add-tag" && add_tag($list, $tag, getcwd());
-        $_ eq "add"       && add_tag($list, $tag, getcwd());
+        $_ eq DSConstants::COMMAND_ADD_SHORT && add_tag($list, $tag, getcwd());
+        $_ eq DSConstants::COMMAND_ADD_LONG  && add_tag($list, $tag, getcwd());
+        $_ eq DSConstants::COMMAND_ADD_WORD && add_tag($list, $tag, getcwd());
         
-        $_ eq "-r"           && remove_tag($list, $tag);
-        $_ eq "--remove-tag" && remove_tag($list, $tag);
-        $_ eq "remove"       && remove_tag($list, $tag);
+        $_ eq DSConstants::COMMAND_REMOVE_SHORT && remove_tag($list, $tag);
+        $_ eq DSConstants::COMMAND_REMOVE_LONG  && remove_tag($list, $tag);
+        $_ eq DSConstants::COMMAND_REMOVE_WORD  && remove_tag($list, $tag);
         
         my $update_dir = $tag;
         
-        $_ eq "--update-previous" && update_previous($list, $update_dir);
+        $_ eq DSConstants::COMMAND_UPDATE_PREVIOUS && update_previous($list, $update_dir);
     }
 }
 
 sub process_triple_args {
     my ($list, $cmd, $tag, $dir) = @_;
 
-    if ($cmd !~ /^-a|--add-tag|add$/) {
+    my $cmd_regex = "^" .
+                    DSConstants::COMMAND_ADD_SHORT . "|" .
+                    DSConstants::COMMAND_ADD_LONG  . "|" .
+                    DSConstants::COMMAND_ADD_WORD  . "\$";
+    
+    if ($cmd !~ /$cmd_regex/) {
         print DSConstants::OPERATION_MSG . "\n";
         print "$cmd: command not recognized. ";
         print DSConstants::COMMAND_ADD_SHORT, ", ";
@@ -163,6 +177,25 @@ sub process_triple_args {
     }
     
     $list->add_tag_entry($tag, $dir);
+}
+
+sub process_multiple_args {
+    my $list = shift;
+    my $cmd = shift;
+    
+    my $cmd_regex = "^" .
+                    DSConstants::COMMAND_ADD_SHORT . "|" .
+                    DSConstants::COMMAND_ADD_LONG  . "|" .
+                    DSConstants::COMMAND_ADD_WORD  . "\$";
+                    
+    if ($cmd !~ /$cmd_regex/) {
+        die "Command \"$cmd\" not recognized.";
+    }
+    
+    my $tag = shift;
+    my @dir_components = @_;
+    my $dir = join " ", @dir_components;
+    add_tag($list, $tag, $dir);     
 }
 
 sub too_many_args {
@@ -191,5 +224,5 @@ for (scalar @ARGV) {
     $_ == 1 && process_single_arg      ($directory_tag_list, @ARGV);
     $_ == 2 && process_double_args     ($directory_tag_list, @ARGV);
     $_ == 3 && process_triple_args     ($directory_tag_list, @ARGV);
-    $_  > 3 && too_many_args           (scalar @ARGV);
+    $_  > 3 && process_multiple_args   ($directory_tag_list, @ARGV);
 }

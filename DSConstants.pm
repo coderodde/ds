@@ -12,7 +12,7 @@ use constant {
     OPERATION_MSG    => "msg",
     OPERATION_LIST   => "list",
     
-    PREVIOUS_DIRECTORY_TAG => "__PREV__",
+    PREVIOUS_DIRECTORY_TAG => "{__PREV__}",
     
     COMMAND_LIST_TAGS             => "-l",
     COMMAND_LIST_TAGS_DIRS        => "-L",
@@ -35,6 +35,8 @@ use constant {
     COMMAND_REMOVE_SHORT => "-r",
     COMMAND_REMOVE_LONG  => "--remove-tag",
     COMMAND_REMOVE_WORD  => "remove",
+    
+    COMMAND_UPDATE_PREVIOUS => "--update-previous",
     
     EXIT_STATUS_TOO_MANY_ARGS => 1,
     EXIT_STATUS_BAD_COMMAND   => 2
