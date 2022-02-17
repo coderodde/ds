@@ -205,7 +205,9 @@ sub too_many_args {
 }
 
 sub get_temp_tag_file_name {
-    return File::Temp::tempfile(DSConstants::TMP_TAG_FILE_NAME_TEMPLATE);
+    my $fh = File::Temp->new(TEMPLATE =>
+                             DSConstants::TMP_TAG_FILE_NAME_TEMPLATE);
+    return $fh->filename;
 }
 
 sub save_list {
