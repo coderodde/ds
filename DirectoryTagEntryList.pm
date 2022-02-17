@@ -1,9 +1,15 @@
 package DirectoryTagEntryList;
 use warnings;
 use strict;
-BEGIN { unshift @INC, '.'; }
-use DirectoryTagEntry;
+use Cwd;
+
+BEGIN { 
+    push @INC, $ENV{"HOME"} . "/.ds";
+    print "LIST @INC";
+}
+
 use DSConstants;
+use DirectoryTagEntry;
 
 sub get_previous_directory;
 

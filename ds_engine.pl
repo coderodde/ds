@@ -1,12 +1,15 @@
 #!/usr/bin/perl
 use warnings;
 use strict;
+use Cwd;
 
 require File::Temp;
 
-BEGIN { unshift @INC, '.'; }
+BEGIN {
+    push @INC, $ENV{"HOME"} . "/.ds";
+    print "LIST @INC";
+}
 
-use Cwd;
 use DSConstants;
 use DirectoryTagEntry;
 use DirectoryTagEntryList;
@@ -39,8 +42,6 @@ sub process_jump_to_previous {
     
     print DSConstants::OPERATION_SWITCH, "\n";
     
-    print "cd ";
-    
     if (defined $previous_dir_tag) {
         print $previous_dir_tag->dir();
     } else {
@@ -54,7 +55,6 @@ sub jump_to_tagged_directory {
     my $best_tag_entry = $list->match($tag);
 
     print DSConstants::OPERATION_SWITCH, "\n";
-    print "cd ";
     
     if (not defined $best_tag_entry) {
         print getcwd();
