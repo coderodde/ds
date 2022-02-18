@@ -13,10 +13,12 @@ use DSConstants;
 use DirectoryTagEntryList;
 use DirectoryTagEntry;
 
-#BEGIN { 
+BEGIN { 
 #    unshift @INC, File::HomeDir->my_home . "/.ds";
 #    print "\@INC: @INC";
-# }
+  #  print ">>>";
+ #   print($INC{"DirectoryTagEntry.pm"}, "\n");
+}
 
 #use DSConstants;
 #use DirectoryTagEntry;
@@ -68,8 +70,10 @@ sub jump_to_tagged_directory {
     if (not defined $best_tag_entry) {
         print getcwd();
     } else {
-        print $best_tag_entry->dir();     
+        print "\"" . $best_tag_entry->dir() . "\"";     
     }
+    
+    print "\n";
 }
 
 sub process_single_arg {
