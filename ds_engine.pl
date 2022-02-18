@@ -2,12 +2,12 @@
 use warnings;
 use strict;
 use Cwd;
+use File::HomeDir;
 
 require File::Temp;
 
-BEGIN {
-    push @INC, $ENV{"HOME"} . "/.ds";
-    print "LIST @INC";
+BEGIN { 
+    unshift @INC, File::HomeDir->my_home . "/.ds";
 }
 
 use DSConstants;

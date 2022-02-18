@@ -2,10 +2,10 @@ package DirectoryTagEntryList;
 use warnings;
 use strict;
 use Cwd;
+use File::HomeDir;
 
 BEGIN { 
-    push @INC, $ENV{"HOME"} . "/.ds";
-    print "LIST @INC";
+    unshift @INC, File::HomeDir->my_home . "/.ds";
 }
 
 use DSConstants;
