@@ -76,13 +76,25 @@ sub new {
 }
 
 sub tag {
-    $_[0]->{"tag"} = $_[1] if defined $_[1];
-    return $_[0]->{"tag"}
+    my $self = shift;
+    my $val = shift;
+    
+    if (defined $val) {
+        $self->{tag} = $val;
+    }
+    
+    return $self->{tag};
 }
 
 sub dir {
-    $_[0]->{"dir"} = $_[1] if defined $_[1];
-    return $_[0]->{"dir"}
+    my $self = shift;
+    my $val = shift;
+    
+    if (defined $val) {
+        $self->{dir} = $val;
+    }
+    
+    return $self->{dir};
 }
 
 sub get_edit_distance_to {

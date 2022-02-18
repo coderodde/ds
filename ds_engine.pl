@@ -5,14 +5,23 @@ use Cwd;
 use File::HomeDir;
 
 require File::Temp;
-
-BEGIN { 
-    unshift @INC, File::HomeDir->my_home . "/.ds";
-}
+#require DSConstants;
+#require DirectoryTagEntry;
+#require DirectoryTagEntryList;
 
 use DSConstants;
-use DirectoryTagEntry;
 use DirectoryTagEntryList;
+use DirectoryTagEntry;
+
+#BEGIN { 
+#    unshift @INC, File::HomeDir->my_home . "/.ds";
+#    print "\@INC: @INC";
+# }
+
+#use DSConstants;
+#use DirectoryTagEntry;
+#use DirectoryTagEntryList;
+
 use File::Temp ();
 
 sub show_tag_list {
@@ -61,8 +70,6 @@ sub jump_to_tagged_directory {
     } else {
         print $best_tag_entry->dir();     
     }
-    
-    print "\n";
 }
 
 sub process_single_arg {
@@ -129,7 +136,7 @@ sub update_previous {
 }
 
 sub process_double_args {
-    my ($list, $cmd, $tag) = @_;
+        my ($list, $cmd, $tag) = @_;
 
     my $cmd_regex = "^" .
                     DSConstants::COMMAND_ADD_SHORT       . "|" .

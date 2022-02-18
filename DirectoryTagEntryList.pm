@@ -3,11 +3,6 @@ use warnings;
 use strict;
 use Cwd;
 use File::HomeDir;
-
-BEGIN { 
-    unshift @INC, File::HomeDir->my_home . "/.ds";
-}
-
 use DSConstants;
 use DirectoryTagEntry;
 
