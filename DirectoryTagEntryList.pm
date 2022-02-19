@@ -3,6 +3,9 @@ use warnings;
 use strict;
 use Cwd;
 use File::HomeDir;
+
+use lib ".";
+
 use DSConstants;
 use DirectoryTagEntry;
 
@@ -194,22 +197,19 @@ sub print_dirs_and_tags {
 
 sub match {
     my $self = shift;
-    my $dir = shift;
-    my $current_edit_distance = undef;
+    my $tag = shift;
+    my $current_best_edit_distance = 1000_000_000;
     my $best_match = undef;
     
     for my $tag_entry (@$self) {
-        my $tmp_edit_distance = $tag_entry->get_edit_distance_to($dir);
+        my $tmp_edit_distance = $tag_entry->get_edit_distance_to($tag);
         
         if ($tmp_edit_distance == 0) {
-            return $tag_entry->dir();
+            return $tag_entry;
         }
         
-        if (not defined $current_edit_distance) {
-            $current_edit_distance = $tmp_edit_distance;
-            $best_match = $tag_entry;
-        } elsif ($current_edit_distance > $tmp_edit_distance) {
-            $current_edit_distance = $tmp_edit_distance;
+        if ($current_best_edit_distance > $tmp_edit_distance) {
+            $current_best_edit_distance = $tmp_edit_distance;
             $best_match = $tag_entry;
         }
     }

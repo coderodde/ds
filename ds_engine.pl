@@ -3,28 +3,11 @@ use warnings;
 use strict;
 use Cwd;
 use File::HomeDir;
-
-require File::Temp;
-#require DSConstants;
-#require DirectoryTagEntry;
-#require DirectoryTagEntryList;
+use lib ".";
 
 use DSConstants;
-use DirectoryTagEntryList;
 use DirectoryTagEntry;
-
-BEGIN { 
-#    unshift @INC, File::HomeDir->my_home . "/.ds";
-#    print "\@INC: @INC";
-  #  print ">>>";
- #   print($INC{"DirectoryTagEntry.pm"}, "\n");
-}
-
-#use DSConstants;
-#use DirectoryTagEntry;
-#use DirectoryTagEntryList;
-
-use File::Temp ();
+use DirectoryTagEntryList;
 
 sub show_tag_list {
     my $list = shift;
@@ -63,14 +46,15 @@ sub process_jump_to_previous {
 sub jump_to_tagged_directory {
     my $list = shift;
     my $tag = shift;
-    my $best_tag_entry = $list->match($tag);
-
+    my $best_tag_entry = $list->match($tag);    
+    
     print DSConstants::OPERATION_SWITCH, "\n";
     
     if (not defined $best_tag_entry) {
         print getcwd();
     } else {
-        print "\"" . $best_tag_entry->dir() . "\"";     
+        my $dir = $best_tag_entry->dir();
+        print "$dir";     
     }
     
     print "\n";
@@ -216,9 +200,9 @@ sub too_many_args {
 }
 
 sub get_temp_tag_file_name {
-    my $fh = File::Temp->new(TEMPLATE =>
-                             DSConstants::TMP_TAG_FILE_NAME_TEMPLATE);
-    return $fh->filename;
+    my $file_name;
+    chomp($file_name = `mktemp ~/.ds/tags.XXXXXX`);
+    return $file_name;
 }
 
 sub save_list {
