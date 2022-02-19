@@ -3,7 +3,9 @@ use warnings;
 use strict;
 use Cwd;
 use File::HomeDir;
-use lib File::HomeDir->my_home . "/.ds";
+#use lib File::HomeDir->my_home . "/.ds";
+
+use lib glob("~/.ds");
 
 use DSConstants;
 use DirectoryTagEntry;
@@ -37,10 +39,12 @@ sub process_jump_to_previous {
     print DSConstants::OPERATION_SWITCH, "\n";
     
     if (defined $previous_dir_tag) {
-        print $previous_dir_tag->dir();
+        print $previous_dir_tag;
     } else {
         print getcwd;
     }
+    
+    print "\n";
 }
 
 sub jump_to_tagged_directory {
@@ -119,7 +123,6 @@ sub update_previous {
     
     $list->update_previous_directory($new_dir);
     save_list($list);
-    print DSConstants::OPERATION_NOP;
 }
 
 sub process_double_args {

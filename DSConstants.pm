@@ -7,14 +7,13 @@ use constant {
     SORT_BY_DIRS => "dirs",
     
     TAG_FILE_NAME              => File::HomeDir->my_home . "/.ds/tags",
-    TMP_TAG_FILE_NAME_TEMPLATE => "tags.XXXXX",
+    TMP_TAG_FILE_NAME_TEMPLATE => File::HomeDir->my_home . "/.ds/tags.XXXXX",
     
     OPERATION_SWITCH => "switch_directory",
-    OPERATION_NOP    => "nop",
     OPERATION_MSG    => "msg",
     OPERATION_LIST   => "list",
     
-    PREVIOUS_DIRECTORY_TAG => "{__PREV__}",
+    PREVIOUS_DIRECTORY_TAG => "zzzPREV",
     
     COMMAND_LIST_TAGS             => "-l",
     COMMAND_LIST_TAGS_DIRS        => "-L",

@@ -4,7 +4,7 @@ use strict;
 use Cwd;
 use File::HomeDir;
 
-use lib File::HomeDir->my_home . "/.ds";
+use lib glob("~/.ds");
 #use lib ".";
 
 use DSConstants;
@@ -58,7 +58,7 @@ sub read_file($) {
     close TAG_FILE;
 }
 
-sub write_file($) {
+sub write_file {
     my $self = shift;
     my $file_name = shift;
     open(TAG_FILE, ">", $file_name) or die "Cannot open $file_name: $!\n";
