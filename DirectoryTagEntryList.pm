@@ -4,7 +4,8 @@ use strict;
 use Cwd;
 use File::HomeDir;
 
-use lib ".";
+use lib File::HomeDir->my_home . "/.ds";
+#use lib ".";
 
 use DSConstants;
 use DirectoryTagEntry;
@@ -195,6 +196,16 @@ sub print_dirs_and_tags {
     }
 }
 
+sub change_tilde_prefix_to_path {
+    my $dir = shift;
+    
+    if ($dir =~ /^\s*\~/) {
+        return File::HomeDir->my_home . substr($dir, 1);
+    }
+    
+    return $dir;
+}
+
 sub match {
     my $self = shift;
     my $tag = shift;
@@ -204,17 +215,30 @@ sub match {
     for my $tag_entry (@$self) {
         my $tmp_edit_distance = $tag_entry->get_edit_distance_to($tag);
         
-        if ($tmp_edit_distance == 0) {
-            return $tag_entry;
-        }
-        
         if ($current_best_edit_distance > $tmp_edit_distance) {
+            if ($tmp_edit_distance == 0) {
+                last;
+            }
+            
+            
             $current_best_edit_distance = $tmp_edit_distance;
             $best_match = $tag_entry;
         }
     }
     
-    return $best_match;
+    if (!$best_match) {
+        return undef;
+    }
+    
+    my $best_match_copy =
+        DirectoryTagEntry->new(tag => $best_match->tag(),
+                               dir => $best_match->dir());
+        
+    $best_match_copy->dir(
+        change_tilde_prefix_to_path(
+            $best_match_copy->dir()));
+        
+    return $best_match_copy;
 }
 
 sub get_tag_entry {

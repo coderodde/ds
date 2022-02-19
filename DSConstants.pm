@@ -1,10 +1,12 @@
 package DSConstants;
 
+use File::HomeDir;
+
 use constant {
     SORT_BY_TAGS => "tags",
     SORT_BY_DIRS => "dirs",
     
-    TAG_FILE_NAME              => "tags",
+    TAG_FILE_NAME              => File::HomeDir->my_home . "/.ds/tags",
     TMP_TAG_FILE_NAME_TEMPLATE => "tags.XXXXX",
     
     OPERATION_SWITCH => "switch_directory",

@@ -3,7 +3,7 @@ use warnings;
 use strict;
 use Cwd;
 use File::HomeDir;
-use lib ".";
+use lib File::HomeDir->my_home . "/.ds";
 
 use DSConstants;
 use DirectoryTagEntry;
@@ -53,8 +53,7 @@ sub jump_to_tagged_directory {
     if (not defined $best_tag_entry) {
         print getcwd();
     } else {
-        my $dir = $best_tag_entry->dir();
-        print "$dir";     
+        print $best_tag_entry->dir();
     }
     
     print "\n";
@@ -164,7 +163,7 @@ sub process_triple_args {
     
     if ($cmd !~ /$cmd_regex/) {
         print DSConstants::OPERATION_MSG . "\n";
-        print "$cmd: command not recognized. ";
+        print "$cmd: command not recognized.";
         print DSConstants::COMMAND_ADD_SHORT, ", ";
         print DSConstants::COMMAND_ADD_LONG, " or ";
         print DSConstants::COMMAND_ADD_WORD, " expected.";
