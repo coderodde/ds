@@ -5,7 +5,6 @@ use Cwd;
 use File::HomeDir;
 
 use lib glob("~/.ds");
-#use lib ".";
 
 use DSConstants;
 use DirectoryTagEntry;
@@ -216,13 +215,14 @@ sub match {
         my $tmp_edit_distance = $tag_entry->get_edit_distance_to($tag);
         
         if ($current_best_edit_distance > $tmp_edit_distance) {
+            $best_match = $tag_entry;
+            
             if ($tmp_edit_distance == 0) {
                 last;
             }
             
             
             $current_best_edit_distance = $tmp_edit_distance;
-            $best_match = $tag_entry;
         }
     }
     

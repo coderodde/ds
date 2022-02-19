@@ -2,15 +2,8 @@ out_file=$(mktemp);
 perl ~/.ds/ds_engine.pl $@ > $out_file
 command_type=$(head -n 1 $out_file)
 
-echo "Hello!"
-
 if [ $# -eq 0 ]; then
-    echo "out file:"
-    cat $out_file
-    
     next_path=$(tail -n 1 $out_file)
-    echo "next: $next_path"
-    echo "pwd: $(pwd)"
     perl ~/.ds/ds_engine.pl --update-previous $(pwd)
     cd "$next_path"
     

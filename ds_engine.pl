@@ -3,7 +3,6 @@ use warnings;
 use strict;
 use Cwd;
 use File::HomeDir;
-#use lib File::HomeDir->my_home . "/.ds";
 
 use lib glob("~/.ds");
 
@@ -82,24 +81,27 @@ sub process_single_arg {
 
 sub add_tag {
     my ($list, $tag, $dir) = @_;
-    my $dup_tag_entry = $list->get_tag_entry($tag);
     
     print DSConstants::OPERATION_MSG, "\n";
     
-    if ($dup_tag_entry) {
-        print "Updating the tag \"$tag\" to point from\n<",
-              $dup_tag_entry->dir(),
-              ">to\n<$dir>\n";
-              
-        $dup_tag_entry->dir($dir);
+    my $tag_entry = $list->get_tag_entry($tag);
+    
+    if (defined $tag_entry) {
+        if ($tag_entry->dir() ne $dir) {
+            print "Updating the directory <" . $tag_entry->dir() . " to <$dir>."; 
+            $tag_entry->dir($dir);  
+        } else {
+            print "Redirecting the tag\"$tag\" to itself. Nothing changed.";  
+        }
     } else {
-        print "Added the tag \"$tag\" to point to \n",
-              "<$dir>.\n";
-              
         $list->add_tag_entry($tag, $dir);
+        
+        print "Added the tag \"$tag\" to point to\n";
+        print "<$dir>.";
     }
     
     save_list($list);
+    print "\n";
 }
 
 sub remove_tag {
@@ -111,7 +113,7 @@ sub remove_tag {
         
     if (defined $remove_tag_entry) {
         print "Removed tag \"" . $remove_tag_entry->tag() . "\"" .
-              " pointing to <" . $remove_tag_entry->dir() . ">";          
+              " pointing to <" . $remove_tag_entry->dir() . ">.\n";          
     } else {
         print "$tag: no such tag.\n";
     }
@@ -144,7 +146,7 @@ sub process_double_args {
     for ($cmd) {
         $_ eq DSConstants::COMMAND_ADD_SHORT && add_tag($list, $tag, getcwd());
         $_ eq DSConstants::COMMAND_ADD_LONG  && add_tag($list, $tag, getcwd());
-        $_ eq DSConstants::COMMAND_ADD_WORD && add_tag($list, $tag, getcwd());
+        $_ eq DSConstants::COMMAND_ADD_WORD  && add_tag($list, $tag, getcwd());
         
         $_ eq DSConstants::COMMAND_REMOVE_SHORT && remove_tag($list, $tag);
         $_ eq DSConstants::COMMAND_REMOVE_LONG  && remove_tag($list, $tag);
@@ -209,10 +211,7 @@ sub get_temp_tag_file_name {
 
 sub save_list {
     my $list = shift;
-    my $temp_tag_file_name = get_temp_tag_file_name();
-    $list->write_file($temp_tag_file_name);
-    unlink(DSConstants::TAG_FILE_NAME);
-    rename $temp_tag_file_name, DSConstants::TAG_FILE_NAME;
+    $list->write_file(DSConstants::TAG_FILE_NAME);
 }
 
 my $directory_tag_list = DirectoryTagEntryList->new();

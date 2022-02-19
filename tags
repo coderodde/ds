@@ -2,6 +2,7 @@ home ~
 root /
 docs ~/Documents
 down ~/Downloads
+folder ~/a\ b\ c\ d
 A /c/Users/rodde/Documents/ds
 B /c/Users/rodde/Documents/ds
 1 2 3 4 5 6
