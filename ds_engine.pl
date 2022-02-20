@@ -88,7 +88,7 @@ sub add_tag {
     
     if (defined $tag_entry) {
         if ($tag_entry->dir() ne $dir) {
-            print "Updating the directory <" . $tag_entry->dir() . " to <$dir>."; 
+            print "Updating the directory <" . $tag_entry->dir() . "> to <$dir>."; 
             $tag_entry->dir($dir);  
         } else {
             print "Redirecting the tag\"$tag\" to itself. Nothing changed.";  
@@ -174,8 +174,8 @@ sub process_triple_args {
         print DSConstants::COMMAND_ADD_WORD, " expected.";
         exit DSConstants::EXIT_STATUS_BAD_COMMAND;
     }
-    
-    $list->add_tag_entry($tag, $dir);
+ 
+    add_tag($list, $tag, $dir);   
 }
 
 sub process_multiple_args {
