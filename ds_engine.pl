@@ -33,12 +33,12 @@ sub show_tag_list_sorted_by_dirs {
 
 sub process_jump_to_previous {
     my $list = shift;
-    my $previous_dir_tag = $list->get_previous_directory();
+    my $previous_dir = $list->get_previous_directory();
     
     print DSConstants::OPERATION_SWITCH, "\n";
     
-    if (defined $previous_dir_tag) {
-        print $previous_dir_tag;
+    if (defined $previous_dir) {
+        print change_dir_spaces_to_escapes($previous_dir);
     } else {
         print getcwd;
     }
@@ -56,7 +56,7 @@ sub jump_to_tagged_directory {
     if (not defined $best_tag_entry) {
         print getcwd();
     } else {
-        print $best_tag_entry->dir();
+        print change_dir_spaces_to_escapes($best_tag_entry->dir());
     }
     
     print "\n";
@@ -79,10 +79,17 @@ sub process_single_arg {
     }
 }
 
+sub change_dir_spaces_to_escapes {
+    my $dir = shift;
+    return $dir;
+#    $dir =~ s/[ ]/\\ /g;
+#    return  "\"" . $dir . "\"";
+}
+
 sub add_tag {
     my ($list, $tag, $dir) = @_;
     
-    print DSConstants::OPERATION_MSG, "\n";
+        print DSConstants::OPERATION_MSG, "\n";
     
     my $tag_entry = $list->get_tag_entry($tag);
     
