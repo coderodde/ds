@@ -38,6 +38,10 @@ sub process_jump_to_previous {
     print DSConstants::OPERATION_SWITCH, "\n";
     
     if (defined $previous_dir) {
+        $list->update_previous_directory(getcwd());
+        # Update the tag file:
+        save_list($list);
+        
         print change_dir_spaces_to_escapes($previous_dir);
     } else {
         print getcwd;
@@ -189,31 +193,34 @@ sub process_multiple_args {
     my $list = shift;
     my $cmd = shift;
     
-    my $cmd_regex = "^" .
-                    DSConstants::COMMAND_ADD_SHORT . "|" .
-                    DSConstants::COMMAND_ADD_LONG  . "|" .
-                    DSConstants::COMMAND_ADD_WORD  . "\$";
+    my $cmd_regex = "^(" .
+                    DSConstants::COMMAND_ADD_SHORT       . "|" .
+                    DSConstants::COMMAND_ADD_LONG        . "|" .
+                    DSConstants::COMMAND_ADD_WORD        . "|" .
+                    DSConstants::COMMAND_UPDATE_PREVIOUS . "\$)";
                     
     if ($cmd !~ /$cmd_regex/) {
         die "Command \"$cmd\" not recognized.";
     }
     
+    my @all_arguments = @_;
+    
     my $tag = shift;
     my @dir_components = @_;
     my $dir = join " ", @dir_components;
-    add_tag($list, $tag, $dir);     
+    
+    if ($1 eq DSConstants::COMMAND_UPDATE_PREVIOUS) {
+        my $path = join " ", @all_arguments;
+        update_previous($list, $path);
+    } else {
+        add_tag($list, $tag, $dir);      
+    }  
 }
 
 sub too_many_args {
     my $count = shift;
     print DSConstants::OPERATION_MSG, "Too many arguments: $count.\n";
     exit DSConstants::EXIT_STATUS_TOO_MANY_ARGS;
-}
-
-sub get_temp_tag_file_name {
-    my $file_name;
-    chomp($file_name = `mktemp ~/.ds/tags.XXXXXX`);
-    return $file_name;
 }
 
 sub save_list {
