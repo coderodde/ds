@@ -189,8 +189,24 @@ sub process_triple_args {
         $cmd eq DSConstants::COMMAND_REMOVE_LONG ||
         $cmd eq DSConstants::COMMAND_REMOVE_WORD) {
         # $tag contains the first out of two tags to remove:
-        remove_tag($list, $tag); 
-        remove_tag($list, $dir);
+        print DSConstants::OPERATION_MSG, "\n";
+        my $removed_tag_entry = $list->remove_tag_entry($tag);
+        
+        if ($removed_tag_entry) {
+            print "Removed tag \"" . $tag . "\".\n";
+        } else {
+            print "No tag \"" . $tag . "\". Omitting.\n";
+        }
+        
+        $removed_tag_entry = $list->remove_tag_entry($dir);
+        
+        if ($removed_tag_entry) {
+            print "Removed tag \"" . $dir . "\".\n";
+        } else {
+            print "No tag \"" . $dir . "\". Omitting.\n";
+        }
+        
+        save_list($list);   
     } else { 
         add_tag($list, $tag, $dir);          
     }
@@ -227,7 +243,7 @@ sub process_multiple_args {
             if ($tag_entry) {
                 print "Removed \"" . $tag_entry->tag() . "\".\n";
             } else {
-                print "No tag \"" . $tag_name . "\ in the tags file. Omit.\n";
+                print "No tag \"" . $tag_name . "\ in the tags file. Omitting.\n";
             }
         }
         
