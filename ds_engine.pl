@@ -60,7 +60,7 @@ sub jump_to_tagged_directory {
     if (not defined $best_tag_entry) {
         print getcwd();
     } else {
-        print change_dir_spaces_to_escapes($best_tag_entry->dir());
+        print $best_tag_entry->dir();
     }
     
     print "\n";
@@ -83,17 +83,10 @@ sub process_single_arg {
     }
 }
 
-sub change_dir_spaces_to_escapes {
-    my $dir = shift;
-    return $dir;
-#    $dir =~ s/[ ]/\\ /g;
-#    return  "\"" . $dir . "\"";
-}
-
 sub add_tag {
     my ($list, $tag, $dir) = @_;
     
-        print DSConstants::OPERATION_MSG, "\n";
+    print DSConstants::OPERATION_MSG, "\n";
     
     my $tag_entry = $list->get_tag_entry($tag);
     
@@ -102,7 +95,7 @@ sub add_tag {
             print "Updating the directory <" . $tag_entry->dir() . "> to <$dir>."; 
             $tag_entry->dir($dir);  
         } else {
-            print "Redirecting the tag\"$tag\" to itself. Nothing changed.";  
+            print "Redirecting the tag \"$tag\" to itself. Nothing changed.";  
         }
     } else {
         $list->add_tag_entry($tag, $dir);
@@ -116,7 +109,7 @@ sub add_tag {
 }
 
 sub remove_tag {
-    my ($list,, $tag) = @_;
+    my ($list, $tag) = @_;
     my $remove_tag_entry = $list->remove_tag_entry($tag);
     save_list($list);
     
@@ -170,12 +163,18 @@ sub process_double_args {
 }
 
 sub process_triple_args {
-    my ($list, $cmd, $tag, $dir) = @_;
-
+    my $list = shift;
+    my $cmd = shift;
+    my $tag = shift;
+    my $dir = shift;
+    
     my $cmd_regex = "^" .
-                    DSConstants::COMMAND_ADD_SHORT . "|" .
-                    DSConstants::COMMAND_ADD_LONG  . "|" .
-                    DSConstants::COMMAND_ADD_WORD  . "\$";
+                    DSConstants::COMMAND_ADD_SHORT    . "|" .
+                    DSConstants::COMMAND_ADD_LONG     . "|" .
+                    DSConstants::COMMAND_ADD_WORD     . "|" .
+                    DSConstants::COMMAND_REMOVE_SHORT . "|" .
+                    DSConstants::COMMAND_REMOVE_LONG  . "|" .
+                    DSConstants::COMMAND_REMOVE_WORD  . "\$";
     
     if ($cmd !~ /$cmd_regex/) {
         print DSConstants::OPERATION_MSG . "\n";
@@ -185,8 +184,16 @@ sub process_triple_args {
         print DSConstants::COMMAND_ADD_WORD, " expected.";
         exit DSConstants::EXIT_STATUS_BAD_COMMAND;
     }
- 
-    add_tag($list, $tag, $dir);   
+    
+    if ($cmd eq DSConstants::COMMAND_REMOVE_SHORT ||
+        $cmd eq DSConstants::COMMAND_REMOVE_LONG ||
+        $cmd eq DSConstants::COMMAND_REMOVE_WORD) {
+        # $tag contains the first out of two tags to remove:
+        remove_tag($list, $tag); 
+        remove_tag($list, $dir);
+    } else { 
+        add_tag($list, $tag, $dir);          
+    }
 }
 
 sub process_multiple_args {
@@ -197,10 +204,35 @@ sub process_multiple_args {
                     DSConstants::COMMAND_ADD_SHORT       . "|" .
                     DSConstants::COMMAND_ADD_LONG        . "|" .
                     DSConstants::COMMAND_ADD_WORD        . "|" .
+                    DSConstants::COMMAND_REMOVE_SHORT    . "|" .
+                    DSConstants::COMMAND_REMOVE_LONG     . "|" .
+                    DSConstants::COMMAND_REMOVE_WORD     . "|" .
                     DSConstants::COMMAND_UPDATE_PREVIOUS . "\$)";
                     
     if ($cmd !~ /$cmd_regex/) {
         die "Command \"$cmd\" not recognized.";
+    }
+    
+    if ($cmd eq DSConstants::COMMAND_REMOVE_SHORT ||
+        $cmd eq DSConstants::COMMAND_REMOVE_LONG ||
+        $cmd eq DSConstants::COMMAND_REMOVE_WORD) {
+        
+        print DSConstants::OPERATION_MSG . "\n";
+        
+        my @all_arguments = @_;
+        
+        for my $tag_name (@all_arguments) {
+            my $tag_entry = $list->remove_tag_entry($tag_name);
+            
+            if ($tag_entry) {
+                print "Removed \"" . $tag_entry->tag() . "\".\n";
+            } else {
+                print "No tag \"" . $tag_name . "\ in the tags file. Omit.\n";
+            }
+        }
+        
+        save_list($list);
+        return;
     }
     
     my @all_arguments = @_;

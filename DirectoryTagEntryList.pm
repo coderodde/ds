@@ -88,7 +88,7 @@ sub add_tag_entry {
     return $tag_entry;
 }
 
-sub remove_tag_entry($) {
+sub remove_tag_entry {
     my $self = shift;
     my $tag = shift;
     my $i = 0;
