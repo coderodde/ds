@@ -4,10 +4,10 @@ script_magic="alias ds='source ~/.ds/ds_script.sh'"
 
 echo "Installing ds..."
 
-grep "$script_magic" > /dev/null 2> /dev/null ~/.bashrc 
+grep "$script_magic" > /dev/null 2> /dev/null ~/.bashrc
 
 if [ $? != 0 ]; then
-	echo "$script_magic" >> ~/.bashrc	
+	echo "$script_magic" >> ~/.bashrc
 	echo "~/.bashrc updated!"
 else
 	echo "~/.bashrc is already updated."
@@ -26,13 +26,13 @@ touch "$tag_file"
 add_tag_to_file () {
 	if grep -q "^$1" $tag_file; then
 		echo "Tag \"$1\" is already in the tag file."
-	else 
+	else
 		echo "$1 $2" >> $tag_file
 		echo "Added tag \"$1\" to \"$2\""
 	fi
 }
 
-# Populate the default 
+# Populate the default
 echo "Populating the tag file with default tags..."
 
 add_tag_to_file "docs" "~/Documents"
