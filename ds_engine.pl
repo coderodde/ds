@@ -38,11 +38,7 @@ sub process_jump_to_previous {
     print DSConstants::OPERATION_SWITCH, "\n";
     
     if (defined $previous_dir) {
-        $list->update_previous_directory(getcwd());
-        # Update the tag file:
-        save_list($list);
-        
-        print change_dir_spaces_to_escapes($previous_dir);
+        print $previous_dir;
     } else {
         print getcwd;
     }
@@ -327,12 +323,6 @@ sub process_multiple_args {
     } else {
         add_tag($list, $tag, $dir);      
     }  
-}
-
-sub too_many_args {
-    my $count = shift;
-    print DSConstants::OPERATION_MSG, "Too many arguments: $count.\n";
-    exit DSConstants::EXIT_STATUS_TOO_MANY_ARGS;
 }
 
 sub save_list {
