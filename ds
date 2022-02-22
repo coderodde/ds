@@ -7,7 +7,7 @@ ds \- manage directory tags
 .B ds
 .br
 .B ds
-.RI [-l|-L|-s|-S|-d-|-h|-v|--help|--version]
+[-l|-L|-s|-S|-d-|-h|-v|--help|--version]
 .br
 .B ds
 TAG
@@ -20,7 +20,7 @@ TAG
 .B ds
 .RI [-r|--remove-tag|remove]
 TAG
-[TAG.\|.\|.]
+.RI [ TAG .\|.\|.]
 
 .SH DESCRIPTION
 ds is a terminal utility for managing the directory tags and switch between directories via tags.
