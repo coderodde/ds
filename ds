@@ -23,9 +23,85 @@ TAG
 .RI [ TAG .\|.\|.]
 
 .SH DESCRIPTION
-ds is a terminal utility for managing the directory tags and switch between directories via tags.
+.B ds
+is a (bash) shell utility for managing directory tags providing a simple facility for tagging directories and switching between them via tags. Also, ds provides a front-end for managing the user's tag file.
+
 .SH OPTIONS
-The nuseradd does not take any options. However, you can supply username.
+.SS "Generic Program Information"
+.TP
+.B \-l
+List all the tags in the order they appear in the tag file.
+.TP
+.BR \-L
+List all the tags and their respective directories in the order they appear in the tag file.
+.TP
+.BR \-s
+List all the tags in sorted order.
+.TP
+.BR \-S
+List all the tags and their respective directories in the order sorted by tags.
+.TP
+.BR \-d
+List all the directories and their respective tags in the order sorted by directories.
+.TP
+.BR \-h ", " \-\^\-help
+Shows the help message and exits.
+.TP
+.BR \-v ", " \-\^\-version
+Shows the version info and exits.
+
+.SS "Tag Management Commands"
+.TP
+.BR \-a "," \-\^\-add-tag ", "add
+Attempts to add the tag
+.B TAG
+and point it to the directory
+.B DIR.
+If
+.B TAG
+is not yet present in the user's tag file, it is created and pointed to
+.B DIR
+. Otherwise, the directory of
+.B TAG
+is redirected to
+.B DIR
+.
+
+.TP
+.BR \-r "," \-\^\-remove-tag ", "remove
+Removes all the listed tags from the user's tag file.
+
+.SH DESCRIPTION
+ds maintains the tag file
+.IB tags
+located in the user's directory
+.IB \[ti]/.ds
+.
+The file has two columns: the left one for the tags and the right one for the respective directories. In addition to all the tags, the tag file (usually) has a tag called
+.IB zzzPREV
+which holds the previously visited directory. This allows ds to "jump" back and forth between two directories simply by invoking the ds without any arguments.
+
+A tag is a string containing no space characters, while directories with spaces are allowed as long as they are surrounded with single or double quotes.
+
+In addition, if the directory starts with a tilde (~), it will be expanded to the name of the user's home directory. In order to keep the tilde character intact, surround the path with single or double quotes.
+
+.SH EXAMPLES
+.TP
+1. To list all the directory/tag pairs sorted by directory:
+.EX
+.B ds -d
+.EE
+.TP
+2. To add a tag "docs" and point it to the directory "~/Documents", type:
+.EX
+.B ds --add-tag docs "~/Documents" 
+.EE
+.TP
+3. To remove tags "home", "root", "docs", type:
+.EX
+.B ds --remove-tag home root docs
+.EE
+
 .SH SEE ALSO
 alias (1), cd (1)
 

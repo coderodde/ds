@@ -146,6 +146,12 @@ sub add_tag {
     
     print DSConstants::OPERATION_MSG, "\n";
     
+    if ($tag =~ /\s+/) {
+        print "Error: a requested tag contains space characters.\n";
+        return;
+    }
+    
+    
     my $tag_entry = $list->get_tag_entry($tag);
     
     if (defined $tag_entry) {
