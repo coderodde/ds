@@ -66,17 +66,75 @@ sub jump_to_tagged_directory {
     print "\n";
 }
 
+sub show_version_info {
+    print DSConstants::OPERATION_MSG, "\n";
+    print <<"END"
+ds (Directory Switcher) 1.6
+Copyright (C) 2022 Rodion "rodde" Efremov.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Written by Rodion Efremov.
+END
+}
+
+sub show_help_info {
+    print DSConstants::OPERATION_MSG, "\n";
+    print <<"END"
+Usage: ds
+       ds TAG
+       ds -a | --add-tag | add TAG [DIR]
+       ds -r | --remove-tag | remove TAG [TAG...]
+       ds -l | -L | -s | -S | -d
+       
+-a | --add-tag | add TAG [DIR]
+    Add tag called TAG and point it to DIR.
+    If DIR is not specified, point to the current working directory.
+           
+-r | --remove-tag | remove TAG [TAG...]
+    Remove all the specified tags from the user\'s tag file.
+           
+-l
+    List all tags in the tag file.
+    
+-L
+    List all tags and directories in the tag file.
+    
+-s
+    List all tags in the tag file sorted by tag names.
+    
+-S
+    List all tags and directories in the tag file sorted by tag names.
+    
+-d
+    List all directories and tags in the tag file sorted by directories.
+    
+TAG
+    Switches to the directory tagged with TAG. If there is not TAG in
+    the tag file, the closest tag (by Levenshtein distance) is assumed.
+    
+[NO ARGS]
+    Switch to the previous directory. Issuing this command repeatedly
+    allows the user to switch back and forth between two directories.
+END
+}
+
 sub process_single_arg {
     my $list = $_[0];
     my $flag = $_[1];
     
-    if ($flag =~ /^-[lLsSd]$/) {
+    if ($flag =~ /^-[lLsSdvh]|--help|--version$/) {
         for ($flag) {
             $_ eq DSConstants::COMMAND_LIST_TAGS             && show_tag_list($list, 0, 0);
             $_ eq DSConstants::COMMAND_LIST_TAGS_DIRS        && show_tag_list($list, 1, 0);
             $_ eq DSConstants::COMMAND_LIST_SORTED_TAGS      && show_tag_list($list, 0, 1);
             $_ eq DSConstants::COMMAND_LIST_SORTED_TAGS_DIRS && show_tag_list($list, 1, 1);
-            $_ eq DSConstants::COMMAND_LIST_SORTED_DIRS      && show_tag_list_sorted_by_dirs($list);  
+            $_ eq DSConstants::COMMAND_LIST_SORTED_DIRS      && show_tag_list_sorted_by_dirs($list);
+            $_ eq DSConstants::COMMAND_VERSION_SHORT         && show_version_info;
+            $_ eq DSConstants::COMMAND_VERSION_LONG          && show_version_info;
+            $_ eq DSConstants::COMMAND_HELP_SHORT            && show_help_info;
+            $_ eq DSConstants::COMMAND_HELP_LONG             && show_help_info;
         }
     } else {
         jump_to_tagged_directory($list, $flag);   

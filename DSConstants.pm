@@ -37,6 +37,12 @@ use constant {
     COMMAND_REMOVE_LONG  => "--remove-tag",
     COMMAND_REMOVE_WORD  => "remove",
     
+    COMMAND_VERSION_SHORT => "-v",
+    COMMAND_VERSION_LONG  => "--version",
+    
+    COMMAND_HELP_SHORT => "-h",
+    COMMAND_HELP_LONG  => "--help",
+    
     COMMAND_UPDATE_PREVIOUS => "--update-previous",
     
     EXIT_STATUS_TOO_MANY_ARGS => 1,
