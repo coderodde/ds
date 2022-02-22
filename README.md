@@ -12,3 +12,7 @@ A *nix terminal utility for tagging directories with tags and changing between t
 # Installing the man pages for the ds
 
     ./install-manpages.sh
+
+# Requirements
+
+ds relies on `Cwd` and `File::HomeDir` modules.
