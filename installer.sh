@@ -4,7 +4,7 @@ script_magic="alias ds='source ~/.ds/ds_script.sh'"
 
 echo "Installing ds..."
 
-grep "$script_magic" ~/.bashrc 
+grep "$script_magic" > /dev/null 2> /dev/null ~/.bashrc 
 
 if [ $? != 0 ]; then
 	echo "$script_magic" >> ~/.bashrc	
