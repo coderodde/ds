@@ -86,21 +86,42 @@ A tag is a string containing no space characters, while directories with spaces 
 In addition, if the directory starts with a tilde (~), it will be expanded to the name of the user's home directory. In order to keep the tilde character intact, surround the path with single or double quotes.
 
 .SH EXAMPLES
-.TP
+
 1. To list all the directory/tag pairs sorted by directory:
-.EX
-.B ds -d
-.EE
-.TP
+.RS 4
+.sp
+.RS 4
+.nf
+\fB
+ds -d
+.fi \fR
+.P
+.RE
+.RE
+
 2. To add a tag "docs" and point it to the directory "~/Documents", type:
-.EX
-.B ds --add-tag docs "~/Documents" 
-.EE
-.TP
+.RS 4
+.sp
+.RS 4
+.nf
+\fB
+ds --add-tag docs "~/Documents"
+.fi \fR
+.P
+.RE
+.RE
+
 3. To remove tags "home", "root", "docs", type:
-.EX
-.B ds --remove-tag home root docs
-.EE
+.RS 4
+.sp
+.RS 4
+.nf
+\fB
+ds --remove-tag home root docs
+.fi \fR
+.P
+.RE
+.RE
 
 .SH SEE ALSO
 alias (1), cd (1)
