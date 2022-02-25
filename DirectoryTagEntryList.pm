@@ -1,10 +1,9 @@
 package DirectoryTagEntryList;
 use warnings;
 use strict;
-use Cwd;
-use File::HomeDir;
-
 use lib glob("~/.ds");
+use Cwd qw(getcwd);
+use File::HomeDir;
 
 use DSConstants;
 use DirectoryTagEntry;
@@ -142,6 +141,7 @@ sub sort {
     if ($flag eq DSConstants::SORT_BY_TAGS) {
         @$self = sort { $a->tag() cmp $b->tag() } @$self;
     } elsif ($flag eq DSConstants::SORT_BY_DIRS) {
+        @$self = sort { $a->tag() cmp $b->tag() } @$self; # secondary sort key
         @$self = sort { $a->dir() cmp $b->dir() } @$self;
     } else {
         die "Unknown sort flag: $flag\n";

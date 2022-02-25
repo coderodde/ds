@@ -1,10 +1,9 @@
 #!/usr/bin/perl
 use warnings;
 use strict;
-use Cwd;
-use File::HomeDir;
-
 use lib glob("~/.ds");
+use Cwd qw(getcwd);
+use File::HomeDir;
 
 use DSConstants;
 use DirectoryTagEntry;
