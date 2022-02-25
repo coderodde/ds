@@ -16,3 +16,7 @@ A *nix terminal utility for tagging directories with tags and changing between t
 # Requirements
 
 ds relies on `Cwd` and `File::HomeDir` modules.
+
+# Getting info
+
+You could run `ds -h` or `man ds` (after installing the man page)
