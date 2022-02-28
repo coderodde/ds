@@ -29,10 +29,6 @@ sub edit_distance_impl (\@\@) {
         # Make $row $matrix_width elements long:
         $row->[$matrix_width - 1] = 0;
         $matrix->[$y] = $row;
-
-        for my $i (0 .. $matrix_width - 1) {
-            $row->[$i] = 0;
-        }
     }
 
     # Initialize the leftmost column:
