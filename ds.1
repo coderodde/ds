@@ -24,7 +24,20 @@ TAG
 
 .SH DESCRIPTION
 .B ds
-is a (bash) shell utility for managing directory tags providing a simple facility for tagging directories and switching between them via tags. Also, ds provides a front-end for managing the user's tag file.
+is a (bash) shell utility for managing directory tags providing a simple facility for tagging directories and switching between them via tags. Also, ds provides a front-end for managing the user's tag file. ds maintains the tag file
+.IB tags
+located in the user's directory
+.IB \[ti]/.ds
+.
+The file has two columns: the left one for the tags and the right one for the respective directories. In addition to all the tags, the tag file (usually) has a tag called
+.IB zzzPREV
+which holds the previously visited directory. This allows ds to "jump" back and forth between two directories simply by invoking the ds without any arguments.
+
+A tag is a string containing no space characters, while directories with spaces are allowed as long as they are surrounded with single or double quotes.
+
+In addition, if the directory starts with a tilde (~), it will be expanded to the name of the user's home directory. In order to keep the tilde character intact, surround the path with single or double quotes.
+
+Finally, when switching by a tag, if the input tag is not present in the user's tag file, the first closest match wll be chosen. For that matching, the edit distance (also known as Levenshtein distancee) is used.
 
 .SH OPTIONS
 .SS "Generic Program Information"
@@ -70,20 +83,6 @@ is redirected to
 .TP
 .BR \-r "," \-\^\-remove-tag ", "remove
 Removes all the listed tags from the user's tag file.
-
-.SH DESCRIPTION
-ds maintains the tag file
-.IB tags
-located in the user's directory
-.IB \[ti]/.ds
-.
-The file has two columns: the left one for the tags and the right one for the respective directories. In addition to all the tags, the tag file (usually) has a tag called
-.IB zzzPREV
-which holds the previously visited directory. This allows ds to "jump" back and forth between two directories simply by invoking the ds without any arguments.
-
-A tag is a string containing no space characters, while directories with spaces are allowed as long as they are surrounded with single or double quotes.
-
-In addition, if the directory starts with a tilde (~), it will be expanded to the name of the user's home directory. In order to keep the tilde character intact, surround the path with single or double quotes.
 
 .SH EXAMPLES
 
