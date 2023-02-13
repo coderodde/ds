@@ -3,7 +3,7 @@ A *nix terminal utility for tagging directories with tags and changing between t
 
 # Downloading ds
 
-    git clone git@github.com:coderodde/ds.git
+    git clone https://github.com/coderodde/ds.git
 
 # Installing ds
 
